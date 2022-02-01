@@ -1,75 +1,94 @@
-import React, { Component } from "react";
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
-class LogIn extends Component {
-  constructor(props) {
-    super(props);
+function LogIn() {
+  const navigate = useNavigate();
 
-    this.state = {
-      user_login_fields: {
-        email: '',
-        password: ''
-      },
-      emptyFields: false
-    };
-  }
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
+  let [empty_fields, setEmptyFields] = useState(false);
 
-  onInputchange = (event) => { // handle inputs
-    this.setState((prevState) => ({
-      user_login_fields: {
-        ...prevState.user_login_fields,
-        [event.target.name]: event.target.value,
-      }
-    }));
+  const onInputchange = event => { // handle inputs
+    if(event.target.name == 'setEmail') {
+      setEmail(event.target.value);
+    } else {
+      setPassword(event.target.value);
+    }
   };
 
-  logIn = (event) => { // do login actions
-    if (
-      this.state.user_login_fields.email === "" ||
-      this.state.user_login_fields.password === ""
-    ) { // validation
-      this.setState({ emptyFields: true });
-      // toast.error("Marked fields are required!");
-      event.preventDefault();
+  const logIn = event => { // do login actions
+    event.preventDefault();
+    console.log('email: ', email);
+    console.log('password: ', password);
+
+    if ( email === "" || password === "" ) { // validation
+      setEmptyFields(true);
+      // TODO: set toaster "Marked fields are required"
+      return;
+    }
+    
+    // TODO: replace DUMMY data with data from DB
+    // DUMMY test
+    // get all users from DB
+    let all_users = localStorage.getItem('all_users');
+    if(!all_users) {
+      // TODO: send toaster notification that user does not exist (table is empty)
+      console.log('User with that email does not exist !');
       return;
     }
 
-    // TODO: do API call for login to check if entered email and password match
+    let find_user_by_email = JSON.parse(all_users).find(el => el.email == email);
 
-    // toast.success("User successfully logged in!");
-    this.setState({ emptyFields: false });
-    event.preventDefault();
+    if(find_user_by_email == null) {
+      // TODO: send toaster notification that user does not exist (table is empty)
+      console.log('User with that email does not exist !');
+      return;
+    }
+    
+    if(find_user_by_email.password != password) {
+      // TODO: set toaster notification that password do not match
+      console.log('Password does not match with that email !');
+      return;
+    }
+
+    localStorage.setItem( 'current_user', JSON.stringify(email) );
+
+    // user successfully logged in - navigate to /dashboard
+    navigate('/dashboard');
+    // TODO: set toaster notification successfully logged in
+    
+    setEmptyFields(false);
+    return;
   };
 
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.logIn}>
-          <h2> Login </h2>
-          <div className="form-fields-labels-wrapper">
-            <div className="form-group-wrapper">
-              <label> Email: </label>
-              <input name="email" type="email" placeholder="Enter your email"
-                className={this.state.user_login_fields.email === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_login_fields.email}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <div className="form-group-wrapper">
-              <label > Password: </label>
-              <input name="password" type="password" placeholder="Enter your password"
-                className={this.state.user_login_fields.password === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_login_fields.password}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <button type="submit" className="custom-btn"> Login </button>
+  return (
+    <div>
+      <form onSubmit={logIn}>
+        <h2> Login </h2>
+        <div className="form-fields-labels-wrapper">
+          <div className="form-group-wrapper">
+            <label> Email: </label>
+            <input name="setEmail" type="email" placeholder="Enter your email"
+              className={email === '' && empty_fields ? "border-error" : ""}
+              value={email}
+              onChange={onInputchange}
+            />
           </div>
-        </form>
-      </div>
-    );
-  }
+          
+          <div className="form-group-wrapper">
+            <label > Password: </label>
+            <input name="setPassword" type="password" placeholder="Enter your password"
+              className={password === '' && empty_fields ? "border-error" : ""}
+              value={password}
+              onChange={onInputchange}
+            />
+          </div>
+          
+          <button type="submit" className="custom-btn"> Login </button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export default LogIn;

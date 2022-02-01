@@ -1,106 +1,102 @@
-import React, { Component } from "react";
+import React, { useState } from 'react';
 
-class SignUp extends Component {
-  constructor(props) {
-    super(props);
+function SignUp() {
 
-    this.state = {
-      user_signup_fields: {
-        email: '',
-        username: '',
-        password: '',
-        password_confirm: '',
-      },
-      emptyFields: false
-    };
-  }
+  let [email, setEmail] = useState('');
+  let [username, setUsername] = useState('');
+  let [password, setPassword] = useState('');
+  let [password_confirm, setPasswordConfirm] = useState('');
+  let [empty_fields, setEmptyFields] = useState(false);
 
-  onInputchange = (event) => { // handle inputs
-    this.setState((prevState) => ({
-      user_signup_fields: {
-        ...prevState.user_signup_fields,
-        [event.target.name]: event.target.value,
-      }
-    }));
+  const onInputChange = event => { // handle inputs
+    if(event.target.name == 'setEmail') {
+      setEmail(event.target.value);
+    } else if(event.target.name == 'setUsername') {
+      setUsername(event.target.value);
+    } else if(event.target.name == 'setPassword') {
+      setPassword(event.target.value);
+    } else {
+      setPasswordConfirm(event.target.value);
+    }
   };
 
-  signUp = (event) => { // do signup actions
-    if (
-      this.state.user_signup_fields.email === "" ||
-      this.state.user_signup_fields.username === "" ||
-      this.state.user_signup_fields.password === "" ||
-      this.state.user_signup_fields.password_confirm === ""
+
+  const signUp = (event) => { // do signup actions
+    event.preventDefault();
+    console.log('email: ', email);
+    console.log('username: ', username);
+    console.log('password: ', password);
+    console.log('password_confirm: ', password_confirm);
+    
+    if ( email === "" || username === "" || password === "" || password_confirm === ""
     ) { // validation
-      this.setState({ emptyFields: true });
+      setEmptyFields(true);
       // toast.error("Marked fields are required!");
-      event.preventDefault();
       return;
     }
 
-    // TODO: check if user with same email exists
-    // for (let i = 0; i < this.props.projects.length; i++) {
-      // if (this.props.projects[i].Name === this.state.user_signup_fields.Name) {
-      //   toast.error("Project with same name already exists !");
-      //   event.preventDefault();
-      //   return;
-      // }
-    // }
+    // TODO: replace DUMMY data with data from DB ---- do API call and after success navigate user to DASHBOARD
+    // DUMMY test
+    let new_user = {email: email, username: username, password: password, password_confirm: password_confirm};
 
-    // TODO: do API call and after success navigate user to DASHBOARD
+    let db_users = localStorage.getItem('all_users');
+    let all_users = db_users ? JSON.parse(db_users) : [];
+    // console.log('all_users: ', JSON.parse(all_users));
+
+    all_users.push(new_user);
+    localStorage.setItem('all_users', JSON.stringify(all_users) );
+    // end DUMMY test
 
     // toast.success("User successfully signed up");
-    this.setState({ emptyFields: false });
-    event.preventDefault();
+    setEmptyFields(false);
   };
 
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.signUp}>
-          <h2> Sign Up </h2>
-          <div className="form-fields-labels-wrapper">
-            <div className="form-group-wrapper">
-              <label> Email: </label>
-              <input name="email" type="email" placeholder="Enter your email"
-                className={this.state.user_signup_fields.email === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_signup_fields.email}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <div className="form-group-wrapper">
-              <label> Username: </label>
-              <input name="username" type="text" placeholder="Enter your username"
-                className={this.state.user_signup_fields.username === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_signup_fields.username}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <div className="form-group-wrapper">
-              <label > Password: </label>
-              <input name="password" type="password" placeholder="Enter your password"
-                className={this.state.user_signup_fields.password === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_signup_fields.password}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <div className="form-group-wrapper">
-              <label> Confirm Password: </label>
-              <input name="password_confirm" type="password" placeholder="Repeat your email"
-                className={this.state.user_signup_fields.password_confirm === '' && this.state.emptyFields ? "border-error" : ""}
-                value={this.state.user_signup_fields.password_confirm}
-                onChange={this.onInputchange}
-              />
-            </div>
-            
-            <button type="submit" className="custom-btn"> Signup </button>
+  return (
+    <div>
+      <form onSubmit={signUp}>
+        <h2> Sign Up </h2>
+        <div className="form-fields-labels-wrapper">
+          <div className="form-group-wrapper">
+            <label> Email: </label>
+            <input name="setEmail" type="email" placeholder="Enter your email"
+              className={email === '' && empty_fields ? "border-error" : ""}
+              value={email}
+              onChange={onInputChange}
+            />
           </div>
-        </form>
-      </div>
-    );
-  }
+          
+          <div className="form-group-wrapper">
+            <label> Username: </label>
+            <input name="setUsername" type="text" placeholder="Enter your username"
+              className={username === '' && empty_fields ? "border-error" : ""}
+              value={username}
+              onChange={onInputChange}
+            />
+          </div>
+          
+          <div className="form-group-wrapper">
+            <label > Password: </label>
+            <input name="setPassword" type="password" placeholder="Enter your password"
+              className={password === '' && empty_fields ? "border-error" : ""}
+              value={password}
+              onChange={onInputChange}
+            />
+          </div>
+          
+          <div className="form-group-wrapper">
+            <label> Confirm Password: </label>
+            <input name="setPasswordConfirm" type="password" placeholder="Repeat your email"
+              className={password_confirm === '' && empty_fields ? "border-error" : ""}
+              value={password_confirm}
+              onChange={onInputChange}
+            />
+          </div>
+          
+          <button type="submit" className="custom-btn"> Signup </button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export default SignUp;

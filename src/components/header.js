@@ -1,40 +1,55 @@
-import React, { Component } from "react";
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-class Header extends Component {
-  constructor(props) {
-    super(props);
+function Header() {
+  const navigate = useNavigate();
 
-    this.state = {
-      user_logged_in: false
-    };
-  }
+  let current_user_status = localStorage.getItem('current_user') ? true : false;
+  console.log('current_user_status: ', current_user_status);
+  let [user_logged_in, setUserStatus] = useState(current_user_status);
 
-  navigate_login_or_logout = () => {
-    console.log('this.state.user_logged_in: ', this.state.user_logged_in);
-    this.setState({user_logged_in: !this.state.user_logged_in});
+  const logoutUser = () => {
+    console.log('user_logged_in: ', user_logged_in);
+    setUserStatus(false);
     // TODO: do functionality for login(navigate to login) and logout(remove login user from localStorage)
+    localStorage.removeItem('current_user');
+    navigate('/');
   }
 
-  render() {
+  const renderLoggedInTabs = () => {
     return (
-      <header className="app-header">
-        {/* <Link to="/signup"> Sign up </Link>
-        <Link to="/dashboard"> All cars listing </Link> */}
-        <ul>
-          <li> <Link to="/signup"> Sign up </Link> </li>
-          <li> <Link to="/dashboard"> Dashboard </Link> </li>
-          <li className="right-item">
-            <a className="header-log-btn" onClick={this.navigate_login_or_logout}> {this.state.user_logged_in ? "Logout" : "Login" } </a>
-          </li>
-        </ul>
+      <>
+        <li> <Link to="/dashboard"> Dashboard </Link> </li>
+        <li className="right-item">
+          <a className="header-log-btn" onClick={logoutUser}> Logout </a>
+        </li>
+      </>
+    );
+  };
 
-        {/* <div className="header-right-items">
-          <a className="header-log-btn" onClick={this.navigate_login_or_logout}> {this.state.user_logged_in ? "Logout" : "Login" } </a>
-        </div> */}
-      </header>
+  const renderLoggedOutTabs = () => {
+    return (
+      <>
+        <li> <Link to="/signup"> Sign up </Link> </li>
+      </>
     );
   }
+
+  console.log('user_logged_in: ', user_logged_in);
+
+  return (
+    <header className="app-header">
+      <ul>
+        {user_logged_in ?
+          renderLoggedInTabs()
+        :
+          renderLoggedOutTabs()
+        }
+      </ul>
+    </header>
+  );
 }
 
 export default Header;
+

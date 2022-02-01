@@ -6,6 +6,8 @@ import SignUp from './components/signup';
 import LogIn from './components/login';
 import ListCars from './components/car_posts/list_cars';
 import PreviewPost from './components/car_posts/preview_post';
+// views
+import HomeLoggedOut from './views/home-logged-out';
 
 function App() {
   return (
@@ -14,8 +16,9 @@ function App() {
         <Header />
 
         <Routes>
-          <Route exact path="/signup" element={<SignUp />}/>
-          <Route exact path="/login" element={<LogIn />}/>
+          <Route path="/" element={<HomeLoggedOut />}/>
+          <Route path="signup" element={<HomeLoggedOut />}/>
+          <Route path="login" element={<HomeLoggedOut />}/>
 
           <Route path="dashboard" element={<ListCars />} />
           <Route path="dashboard/:postId" element={<PreviewPost />} />

@@ -68,6 +68,13 @@ form {
   cursor: pointer;
 }
 
+.tab-btn {
+  background: #808080;
+}
+.active-tab-btn {
+  border: 3px solid white;
+}
+
 /* .list-cars table {
   margin: 0 auto;
   border: 1px solid grey;
