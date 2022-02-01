@@ -18,8 +18,12 @@ class EachPostCard extends Component {
       <div className="each-post-card">
         <h2 className="title"> {this.props.post.title} </h2>
         <div className="post-content">
-          <p> Post-Id: {this.props.post.id} </p>
+          {/* <p> Post-Id: {this.props.post.id} </p> */}
           <p> Description: {this.props.post.description} </p>
+          <p> Manufacturer: {this.props.post.manufacturer} - Model: {this.props.post.model} </p>
+          <p> Price: {this.props.post.price} </p>
+          <p> Email: {this.props.post.email} </p>
+          <p> Date posted: {this.props.post.dateBuild} </p>
         </div>
       </div>
     );

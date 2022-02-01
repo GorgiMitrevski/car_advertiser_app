@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 
 import SignUp from '../components/signup';
@@ -10,6 +10,12 @@ function HomeLoggedOut() {
 
   let current_tab_onloading = location.pathname == '/login' ? '/login' : '/signup';
   let [current_tab, setTab] = useState(current_tab_onloading);
+
+  useEffect(() => {
+    console.log('Location changed');
+    let current_tab_onloading = location.pathname == '/login' ? '/login' : '/signup';
+    setTab(current_tab_onloading);
+  }, [location]);
 
   const setActiveTab = tab => {
     setTab(tab);

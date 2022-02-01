@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
+  const navigate = useNavigate();
 
-  let [email, setEmail] = useState('');
+  let [name, setName] = useState('');
   let [username, setUsername] = useState('');
   let [password, setPassword] = useState('');
-  let [password_confirm, setPasswordConfirm] = useState('');
+  let [email, setEmail] = useState('');
   let [empty_fields, setEmptyFields] = useState(false);
 
   const onInputChange = event => { // handle inputs
@@ -16,38 +19,48 @@ function SignUp() {
     } else if(event.target.name == 'setPassword') {
       setPassword(event.target.value);
     } else {
-      setPasswordConfirm(event.target.value);
+      setName(event.target.value);
     }
   };
 
 
   const signUp = (event) => { // do signup actions
     event.preventDefault();
-    console.log('email: ', email);
-    console.log('username: ', username);
-    console.log('password: ', password);
-    console.log('password_confirm: ', password_confirm);
     
-    if ( email === "" || username === "" || password === "" || password_confirm === ""
-    ) { // validation
+    if ( email === "" || username === "" || password === "" || name === "" ) { // validation
       setEmptyFields(true);
       // toast.error("Marked fields are required!");
       return;
     }
 
-    // TODO: replace DUMMY data with data from DB ---- do API call and after success navigate user to DASHBOARD
-    // DUMMY test
-    let new_user = {email: email, username: username, password: password, password_confirm: password_confirm};
+    let new_user = { name: name, username: username, email: email, password: password};
 
-    let db_users = localStorage.getItem('all_users');
-    let all_users = db_users ? JSON.parse(db_users) : [];
-    // console.log('all_users: ', JSON.parse(all_users));
+    axios({
+      url: "http://localhost:8080/signup",
+      method: "POST",
+      // headers: {
+        // authorization: `Bearer ${token}`,
+      // },
+      data: new_user
+    }).then(res => {
+      axios({
+        url: "http://localhost:8080/authenticate",
+        method: "POST",
+        data: {
+          username: username,
+          password: password
+        }
+      }).then(res_authenticate => {
+        if(res_authenticate.status = 200) {
+          localStorage.setItem('token', JSON.stringify(res_authenticate.data.token));
+          // toast.success("User successfully signed up");
+          navigate('/login', { replace: true });
+        } else {
+          console.log('error - something is wrong');
+        }
+      })
+    })
 
-    all_users.push(new_user);
-    localStorage.setItem('all_users', JSON.stringify(all_users) );
-    // end DUMMY test
-
-    // toast.success("User successfully signed up");
     setEmptyFields(false);
   };
 
@@ -56,11 +69,12 @@ function SignUp() {
       <form onSubmit={signUp}>
         <h2> Sign Up </h2>
         <div className="form-fields-labels-wrapper">
+          
           <div className="form-group-wrapper">
-            <label> Email: </label>
-            <input name="setEmail" type="email" placeholder="Enter your email"
-              className={email === '' && empty_fields ? "border-error" : ""}
-              value={email}
+            <label> Name: </label>
+            <input name="setName" type="text" placeholder="Enter your name"
+              className={name === '' && empty_fields ? "border-error" : ""}
+              value={name}
               onChange={onInputChange}
             />
           </div>
@@ -75,19 +89,19 @@ function SignUp() {
           </div>
           
           <div className="form-group-wrapper">
-            <label > Password: </label>
-            <input name="setPassword" type="password" placeholder="Enter your password"
-              className={password === '' && empty_fields ? "border-error" : ""}
-              value={password}
+            <label> Email: </label>
+            <input name="setEmail" type="email" placeholder="Enter your email"
+              className={email === '' && empty_fields ? "border-error" : ""}
+              value={email}
               onChange={onInputChange}
             />
           </div>
           
           <div className="form-group-wrapper">
-            <label> Confirm Password: </label>
-            <input name="setPasswordConfirm" type="password" placeholder="Repeat your email"
-              className={password_confirm === '' && empty_fields ? "border-error" : ""}
-              value={password_confirm}
+            <label > Password: </label>
+            <input name="setPassword" type="password" placeholder="Enter your password"
+              className={password === '' && empty_fields ? "border-error" : ""}
+              value={password}
               onChange={onInputChange}
             />
           </div>

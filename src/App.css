@@ -49,7 +49,8 @@ form {
   float: left;
   margin-right: 3px;
 }
-.form-group-wrapper input {
+.form-group-wrapper input,
+.form-group-wrapper select {
   float: right;
 }
 .custom-btn {
@@ -93,4 +94,27 @@ form {
 }
 .each-post-card .title {
   text-align: center;
+}
+
+/* modal */
+.modal {
+  z-index: 3;
+  display: block;
+  padding-top: 100px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+.modal .modal-body {
+  background: white;
+  max-width: 450px;
+  min-height: 150px;
+  border-radius: 10px;
+  color: #000000;
+  margin: auto;
 }
