@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -27,9 +28,14 @@ function SignUp() {
   const signUp = (event) => { // do signup actions
     event.preventDefault();
     
-    if ( email === "" || username === "" || password === "" || name === "" ) { // validation
+    if ( email === "" || username === "" || password === "" || name === "") { // validation
       setEmptyFields(true);
-      // toast.error("Marked fields are required!");
+      toast.error("Market fields are required");
+      return;
+    }
+    if(password.length < 6) {
+      setEmptyFields(true);
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -38,9 +44,6 @@ function SignUp() {
     axios({
       url: "http://localhost:8080/signup",
       method: "POST",
-      // headers: {
-        // authorization: `Bearer ${token}`,
-      // },
       data: new_user
     }).then(res => {
       axios({
@@ -53,10 +56,10 @@ function SignUp() {
       }).then(res_authenticate => {
         if(res_authenticate.status = 200) {
           localStorage.setItem('token', JSON.stringify(res_authenticate.data.token));
-          // toast.success("User successfully signed up");
+          toast.success("Successfully signed up");
           navigate('/login', { replace: true });
         } else {
-          console.log('error - something is wrong');
+          toast.error("Something went wrong, please try again");
         }
       })
     })
@@ -100,7 +103,7 @@ function SignUp() {
           <div className="form-group-wrapper">
             <label > Password: </label>
             <input name="setPassword" type="password" placeholder="Enter your password"
-              className={password === '' && empty_fields ? "border-error" : ""}
+              className={(password === '' && empty_fields) || (password.length < 6 && empty_fields) ? "border-error" : ""}
               value={password}
               onChange={onInputChange}
             />
@@ -109,6 +112,7 @@ function SignUp() {
           <button type="submit" className="custom-btn"> Signup </button>
         </div>
       </form>
+      {/* <ToastContainer /> */}
     </div>
   );
 }

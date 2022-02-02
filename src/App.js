@@ -1,12 +1,14 @@
 import './App.css';
 import * as React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom"; // Link
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // components
 import Header from './components/header';
-import ListCars from './components/car_posts/list-cars';
-import PreviewPost from './components/car_posts/preview_post';
 // views
 import HomeLoggedOut from './views/home-logged-out';
+import ListCars from './views/dashboard-list-cars.js';
+import PreviewPost from './views/preview-post';
 
 function App() {
   
@@ -18,21 +20,21 @@ function App() {
         <Routes>
           <Route path="/"
             element={
-              <RequireLoginAuth redirectTo="/dashboard">
+              <RequireLoginAuth>
                 <HomeLoggedOut />
               </RequireLoginAuth>
             }
           />
           <Route path="signup"
             element={
-              <RequireLoginAuth redirectTo="/dashboard">
+              <RequireLoginAuth>
                 <HomeLoggedOut />
               </RequireLoginAuth>
             }
           />
           <Route path="login"
             element={
-              <RequireLoginAuth redirectTo="/dashboard">
+              <RequireLoginAuth>
                 <HomeLoggedOut />
               </RequireLoginAuth>
             }
@@ -40,7 +42,7 @@ function App() {
 
           <Route path="dashboard"
             element={
-              <RequireDashboardAuth redirectTo="/login">
+              <RequireDashboardAuth>
                 <ListCars />
               </RequireDashboardAuth>
             }
@@ -48,7 +50,7 @@ function App() {
 
           <Route path="dashboard/:postId"
             element={
-              <RequireDashboardAuth redirectTo="/login">
+              <RequireDashboardAuth>
                 <PreviewPost />
               </RequireDashboardAuth>
             }
@@ -57,6 +59,7 @@ function App() {
           <Route path="dashboard/:postId" element={<PreviewPost />} />
         </Routes>
 
+        <ToastContainer />
       </div>
     </Router>
   );
@@ -64,7 +67,8 @@ function App() {
 
 export default App;
 
-function RequireLoginAuth( {children, redirectTo} ) {
+// Authentications for routes
+function RequireLoginAuth( {children} ) {
   let is_authenticated = localStorage.getItem('token') && localStorage.getItem('current_username');
 
   if(is_authenticated) { // if user logged in navigate to dashboard
@@ -74,7 +78,7 @@ function RequireLoginAuth( {children, redirectTo} ) {
   return children;
 }
 
-function RequireDashboardAuth( {children, redirectTo} ) {
+function RequireDashboardAuth( {children} ) {
   let is_authenticated = localStorage.getItem('token') && localStorage.getItem('current_username');
 
   if(!is_authenticated) { // if user not logged in navigate to login

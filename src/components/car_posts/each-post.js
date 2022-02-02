@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 function EachPostCard(props) {
+  const navigate = useNavigate();
 
   let [username, setUsername] = useState('');
 
   useEffect(() => {
     setUsername(localStorage.getItem('current_username'));
-    console.log(localStorage.getItem('current_username'));
   }, []);
+
+  const navigateToPreview = () => {
+    navigate(`/dashboard/${props.post.id}`);
+  }
 
   return (
     <div className="each-post-card">
@@ -20,9 +25,15 @@ function EachPostCard(props) {
         <p> Email: {props.post.email} </p>
         <p> Date posted: {props.post.dateBuild} </p>
       </div>
-      {username == props.post.user.username &&
-        <button type="button" className="custom-btn"> Update </button>
-      }
+      <div className="post-card-buttons">
+        {username == props.post.user.username &&
+          <>
+            <button type="button" className="custom-btn tab-btn" onClick={ () => { props.openUpdateCar(props.post, true) } }> Update </button>
+            <button type="button" className="custom-btn tab-btn" onClick={ () => { props.deleteCarPost(props.post.id) } }> Delete </button>
+          </>
+        }
+        <button type="button" className="custom-btn tab-btn" onClick={navigateToPreview}> Preview </button>
+      </div>
     </div>
   );
 }

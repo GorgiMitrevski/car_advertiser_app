@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 function LogIn() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function LogIn() {
 
     if ( username === "" || password === "" ) { // validation
       setEmptyFields(true);
-      // toast.success("Marked fields are required!");
+      toast.error("Market fields are required");
       return;
     }
 
@@ -36,14 +37,15 @@ function LogIn() {
       }
     }).then(res => {
       if(res.status = 200) {
-        console.log('res: ', res);
         localStorage.setItem('token', JSON.stringify(res.data.token));
         localStorage.setItem('current_username', username);
-        // toast.success("User successfully signed up");
+        toast.success("Successfully logged in");
         navigate('/dashboard');
       } else {
-        console.log('error - something is wrong');
+        toast.error("Something went wrong, please try again");
       }
+    }).catch(err => {
+      toast.error("Invalid credentials");
     })
     
     setEmptyFields(false);

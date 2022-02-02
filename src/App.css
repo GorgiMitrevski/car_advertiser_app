@@ -95,12 +95,15 @@ form {
 .each-post-card .title {
   text-align: center;
 }
+.post-card-buttons {
+  text-align: right;
+}
 
 /* modal */
 .modal {
   z-index: 3;
   display: block;
-  padding-top: 100px;
+  padding-top: 40px;
   position: fixed;
   left: 0;
   top: 0;

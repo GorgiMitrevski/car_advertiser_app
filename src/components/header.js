@@ -43,8 +43,6 @@ function Header() {
     );
   }
 
-  console.log('user_logged_in: ', user_logged_in);
-
   return (
     <header className="app-header">
       <ul>
