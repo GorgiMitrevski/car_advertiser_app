@@ -3,11 +3,27 @@ import EachPostCard from "./each_post";
 import AddCarModal from "../add-car-modal";
 import axios from "axios";
 
+import Pagination from "react-pagination-js";
+import "react-pagination-js/dist/styles.css"; // import css
+
 function ListCars() {
 
   let [car_posts, setCarPosts] = useState([]);
   let [current_opened_preview, setForPreview] = useState({});
   let [add_modal_opened, setModalStatus] = useState(false);
+  
+  let [current_page, setCurrentPage] = useState(1);
+  let [per_page_items, setPerPageItems] = useState(2);
+  let [current_page_items, setCurrentPageItems] = useState([]);
+
+  const changeCurrentPage = page_num => {
+    setCurrentPage(page_num);
+    
+    let page_items_start = per_page_items * page_num - per_page_items;
+    let page_items_end = page_items_start + per_page_items;
+
+    setCurrentPageItems(car_posts.slice(page_items_start, page_items_end));
+  };
 
   useEffect(() => {
     getAllPosts();
@@ -21,9 +37,15 @@ function ListCars() {
         authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`
       },
     }).then(res => {
-      console.log('res: ', res);
       if(res.status == 200) {
-        setCarPosts(res.data);
+        let sorted_posts_by_date = res.data.sort((a,b) => {
+          return new Date(b.dateBuild) - new Date(a.dateBuild);
+        });
+        setCarPosts(sorted_posts_by_date);
+
+        let page_items_start = per_page_items * current_page - per_page_items;
+        let page_items_end = page_items_start + per_page_items;
+        setCurrentPageItems(sorted_posts_by_date.slice(page_items_start, page_items_end));
       } else {
         console.log('error - something is wrong');
       }
@@ -42,11 +64,7 @@ function ListCars() {
   };
 
   const renderPosts = () => { // render all car posts
-    let sorted_posts_by_date = car_posts.sort((a,b) => {
-      return new Date(b.dateBuild) - new Date(a.dateBuild);
-    });
-
-    return sorted_posts_by_date.map((post) => {
+    return current_page_items.map((post) => {
       return (
         <EachPostCard
           key={post.id}
@@ -68,6 +86,13 @@ function ListCars() {
       :
         <h2> There are no posts yet in our system </h2>
       }
+
+      <Pagination
+        currentPage={current_page}
+        totalSize={car_posts.length} // total length of items (car posts)
+        sizePerPage={per_page_items}
+        changeCurrentPage={changeCurrentPage}
+      />
 
       {add_modal_opened &&
         <AddCarModal

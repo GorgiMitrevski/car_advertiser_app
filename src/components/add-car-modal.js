@@ -103,11 +103,7 @@ function AddCarModal(props) {
 
             <div className="form-group-wrapper">
               <label > Description: </label>
-              <input name="setDescription" type="text" placeholder="Enter car description"
-                className={description === '' && empty_fields ? "border-error" : ""}
-                value={description}
-                onChange={onInputchange}
-              />
+              <textarea name="setDescription" className="description-text-area" rows="2" cols="20" value={description} onChange={onInputchange}/>
             </div>
 
             <div className="form-group-wrapper">
@@ -119,6 +115,7 @@ function AddCarModal(props) {
               />
             </div>
             
+            <button type="button" className="custom-btn" onClick={props.closeModal}> Cancel </button>
             <button type="submit" className="custom-btn"> Add car </button>
           </div>
         </form>

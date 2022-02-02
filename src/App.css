@@ -118,3 +118,11 @@ form {
   color: #000000;
   margin: auto;
 }
+
+.description-text-area {
+  max-width: 250px;
+  max-height: 100px
+}
+.react-pagination-js-default {
+  padding: 30px;
+}

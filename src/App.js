@@ -16,34 +16,41 @@ function App() {
         <Header />
 
         <Routes>
-          {/* TODO: change this in one path*/}
           <Route path="/"
             element={
-              <RequireAuth redirectTo="/dashboard">
+              <RequireLoginAuth redirectTo="/dashboard">
                 <HomeLoggedOut />
-              </RequireAuth>
+              </RequireLoginAuth>
             }
           />
-          <Route path="/signup"
+          <Route path="signup"
             element={
-              <RequireAuth redirectTo="/dashboard">
+              <RequireLoginAuth redirectTo="/dashboard">
                 <HomeLoggedOut />
-              </RequireAuth>
+              </RequireLoginAuth>
             }
           />
-          <Route path="/login"
+          <Route path="login"
             element={
-              <RequireAuth redirectTo="/dashboard">
+              <RequireLoginAuth redirectTo="/dashboard">
                 <HomeLoggedOut />
-              </RequireAuth>
+              </RequireLoginAuth>
             }
           />
 
-          <Route path="/dashboard"
+          <Route path="dashboard"
             element={
-              <RequireAuth redirectTo="/login">
+              <RequireDashboardAuth redirectTo="/login">
                 <ListCars />
-              </RequireAuth>
+              </RequireDashboardAuth>
+            }
+          />
+
+          <Route path="dashboard/:postId"
+            element={
+              <RequireDashboardAuth redirectTo="/login">
+                <PreviewPost />
+              </RequireDashboardAuth>
             }
           />
 
@@ -57,17 +64,22 @@ function App() {
 
 export default App;
 
-function RequireAuth( {children, redirectTo} ) {
-  let is_user_logged_in = localStorage.getItem('token');
-  let current_username = localStorage.getItem('current_username');
+function RequireLoginAuth( {children, redirectTo} ) {
+  let is_authenticated = localStorage.getItem('token') && localStorage.getItem('current_username');
 
-  // if(redirectTo == '/login' && !is_user_logged_in || !current_username) {
-  //   return <Navigate to={redirectTo} replace />;
-  // } 
-  //else
-  // if(redirectTo == '/dashboard' && is_user_logged_in && current_username) {
-  //   return <Navigate to={redirectTo} replace />;
-  // }
+  if(is_authenticated) { // if user logged in navigate to dashboard
+    return <Navigate to={'/dashboard'} replace />;
+  }
+
+  return children;
+}
+
+function RequireDashboardAuth( {children, redirectTo} ) {
+  let is_authenticated = localStorage.getItem('token') && localStorage.getItem('current_username');
+
+  if(!is_authenticated) { // if user not logged in navigate to login
+    return <Navigate to={'/login'} replace />;
+  }
 
   return children;
 }

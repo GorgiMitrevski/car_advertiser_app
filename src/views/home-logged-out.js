@@ -12,7 +12,6 @@ function HomeLoggedOut() {
   let [current_tab, setTab] = useState(current_tab_onloading);
 
   useEffect(() => {
-    console.log('Location changed');
     let current_tab_onloading = location.pathname == '/login' ? '/login' : '/signup';
     setTab(current_tab_onloading);
   }, [location]);
