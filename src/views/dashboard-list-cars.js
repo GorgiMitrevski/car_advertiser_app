@@ -19,6 +19,8 @@ function ListCars() {
   let [current_page_items, setCurrentPageItems] = useState([]);
 
   let [current_car_for_update, setCurrentCarForUpdating] = useState(null);
+  let [manufacturer_filter, setManufacturerFilter] = useState("");
+  let [total_car_posts, setTotalCarPosts] = useState(0);
 
   const changeCurrentPage = page_num => {
     setCurrentPage(page_num);
@@ -47,6 +49,7 @@ function ListCars() {
         });
         setCarPosts(sorted_posts_by_date);
 
+        setTotalCarPosts(sorted_posts_by_date.length);
         let page_items_start = per_page_items * current_page - per_page_items;
         let page_items_end = page_items_start + per_page_items;
         setCurrentPageItems(sorted_posts_by_date.slice(page_items_start, page_items_end));
@@ -102,6 +105,18 @@ function ListCars() {
     });
   };
 
+  const filterByManufacturer = event => {
+    setManufacturerFilter(event.target.value);
+    let filtered_cars = car_posts.filter(el => el.manufacturer == event.target.value);
+    if(event.target.value == "") {
+      filtered_cars = car_posts;
+    }
+    setTotalCarPosts(filtered_cars.length);
+    let page_items_start = per_page_items * current_page - per_page_items;
+    let page_items_end = page_items_start + per_page_items;
+    setCurrentPageItems(filtered_cars.slice(page_items_start, page_items_end));
+  }
+
   return (
     <div className="list_cars">
       
@@ -109,7 +124,20 @@ function ListCars() {
         onClick={openCloseAddModal}
       > Add new car </button>
 
-      {car_posts.length > 0 ?
+      <div>
+        <span> Filter by manufacturer: </span>
+        <select name="setManufacturer" value={manufacturer_filter} onChange={filterByManufacturer}>
+          <option value=""> Select option </option>
+          <option value="BMW"> BMW </option>
+          <option value="PEUGEOT"> PEUGEOT </option>
+          <option value="FIAT"> FIAT </option>
+          <option value="KIA"> KIA </option>
+          <option value="TOYOTA"> TOYOTA </option>
+          <option value="CHEVROLET"> CHEVROLET </option>
+        </select>
+      </div>
+
+      {total_car_posts > 0 ?
         renderPosts()
       :
         <h2> There are no posts yet in our system </h2>
@@ -117,7 +145,7 @@ function ListCars() {
 
       <Pagination
         currentPage={current_page}
-        totalSize={car_posts.length} // total length of items (car posts)
+        totalSize={total_car_posts} // total length of items (car posts)
         sizePerPage={per_page_items}
         changeCurrentPage={changeCurrentPage}
       />
